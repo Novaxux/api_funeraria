@@ -70,5 +70,15 @@ export default function relativesRepository(pool) {
         throw error;
       }
     },
+    // Get all relatives linked to a user
+    async getRelativesByUser(id_user) {
+      const [rows] = await pool.query(
+        `SELECT r.* FROM relatives r
+         JOIN relatives_users ru ON ru.id_relative = r.id_relative
+         WHERE ru.id_user = ?`,
+        [id_user]
+      );
+      return rows;
+    },
   };
 }
