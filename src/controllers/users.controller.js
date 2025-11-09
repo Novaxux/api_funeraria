@@ -6,12 +6,7 @@ import usersRepository from "../models/usersRepository.js";
 export const signup = async (req, res) => {
   const connection = await pool.getConnection();
   try {
-    const {
-      name,
-      email,
-      password,
-      role = "client",
-    } = req.body;
+    const { name, email, password, role = "client" } = req.body;
 
     await connection.beginTransaction();
 
@@ -58,11 +53,16 @@ export const login = async (req, res) => {
         .json({ message: "Email and password are required." });
 
     const user = await usersRepository.findByEmail(pool, email);
-    if (!user) return res.status(404).json({ message: "User not found." });
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: "Email or password are incorrect." });
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch)
-      return res.status(401).json({ message: "Incorrect password." });
+      return res
+        .status(401)
+        .json({ message: "Email or password are incorrect." });
 
     req.session.userId = user.user_id;
 
