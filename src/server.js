@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import session from "express-session";
+import sessionMiddleware from "./middleware/session.middleware.js";
 
-import { PORT, CORS_ORIGIN, SESSION_SECRET } from "./config/config.js";
+import { PORT, CORS_ORIGIN } from "./config/config.js";
 
 // Enrutador principal
 import apiRoutes from "./routes/api.routes.js";
@@ -15,19 +15,7 @@ app.use(express.json());
 // app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 
 // --- Configuración de sesión (opcional, puede ser útil para web) ---
-app.use(
-  session({
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: false, // cambia a true si usas HTTPS
-      sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24, // 1 día
-    },
-  })
-);
+app.use(sessionMiddleware);
 
 // --- Rutas ---
 app.use("/api", apiRoutes);

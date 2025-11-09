@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    restart: always
     ports:
       - "${PORT}:${PORT}"
     env_file:
@@ -18,8 +19,7 @@ services:
     env_file:
       - .env
     volumes:
-      - mysql-data:/var/lib/mysql
+      # - mysql-data:/var/lib/mysql
       - ./data:/docker-entrypoint-initdb.d
-
-volumes:
-  mysql-data:
+#volumes:
+# mysql-data:
