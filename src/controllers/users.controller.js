@@ -46,11 +46,10 @@ export const signup = async (req, res) => {
     connection.release();
 
     // Iniciar sesión automáticamente tras registrarse
-    req.session.userId = newUserId;
+    req.session.user = { id: newUserId };
 
     return res.status(201).json({
       message: "Your profile has been created successfully.",
-      user_id: newUserId,
     });
   } catch (error) {
     await connection.rollback();
@@ -70,17 +69,21 @@ export const login = async (req, res) => {
         .json({ message: "Email and password are required." });
 
     const user = await usersRepository.findByEmail(pool, email);
-    if (!user) return res.status(404).json({ message: "User not found." });
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: "Email or password are incorrect." });
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch)
-      return res.status(401).json({ message: "Incorrect password." });
+      return res
+        .status(401)
+        .json({ message: "Email or password are incorrect." });
 
-    req.session.userId = user.id_user;
-
+    req.session.user = { id: user.id_user };
+    console.log("Session after login:", req.session);
     return res.status(200).json({
       message: "Login successful.",
-      user_id: user.id_user,
     });
   } catch (error) {
     console.error("Login error:", error);
