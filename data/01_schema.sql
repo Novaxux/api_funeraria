@@ -23,7 +23,7 @@ CREATE TABLE funeral_homes (
 CREATE TABLE users (
   id_user INT(11) NOT NULL AUTO_INCREMENT,
   name VARCHAR(100) NOT NULL,
-  role ENUM('client','admin','worker','funeral_home') NOT NULL,
+  role ENUM('cliente','admin','worker','funeral_home') NOT NULL,
   email VARCHAR(100) NOT NULL UNIQUE,
   death_date DATE DEFAULT NULL,
   alive TINYINT(1) NOT NULL DEFAULT 1,

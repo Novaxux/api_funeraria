@@ -1,8 +1,5 @@
 const UsersRepository = {
-  async createUser(
-    pool,
-    { name, role, email, password}
-  ) {
+  async createUser(pool, { name, role, email, password }) {
     const [result] = await pool.query(
       `INSERT INTO users (name, role, email, password )
        VALUES (?, ?, ?, ? )`,
@@ -21,7 +18,7 @@ const UsersRepository = {
 
   async findById(pool, userId) {
     const [rows] = await pool.query(
-      `SELECT * FROM users WHERE user_id = ? LIMIT 1`,
+      `SELECT * FROM users WHERE id_user = ? LIMIT 1`,
       [userId]
     );
     return rows[0];
@@ -41,7 +38,7 @@ const UsersRepository = {
     values.push(userId);
 
     const [result] = await pool.query(
-      `UPDATE users SET ${fields.join(", ")} WHERE user_id = ?`,
+      `UPDATE users SET ${fields.join(", ")} WHERE id_user = ?`,
       values
     );
     return result.affectedRows > 0;

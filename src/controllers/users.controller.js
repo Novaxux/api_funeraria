@@ -6,12 +6,23 @@ import usersRepository from "../models/usersRepository.js";
 export const signup = async (req, res) => {
   const connection = await pool.getConnection();
   try {
-    const {
-      name,
-      email,
-      password,
-      role = "client",
-    } = req.body;
+    const { name, email, password, role = "cliente" } = req.body;
+
+    // Validation
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Name, email, and password are required." });
+    }
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters long." });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format." });
+    }
 
     await connection.beginTransaction();
 
@@ -65,11 +76,11 @@ export const login = async (req, res) => {
     if (!passwordMatch)
       return res.status(401).json({ message: "Incorrect password." });
 
-    req.session.userId = user.user_id;
+    req.session.userId = user.id_user;
 
     return res.status(200).json({
       message: "Login successful.",
-      user_id: user.user_id,
+      user_id: user.id_user,
     });
   } catch (error) {
     console.error("Login error:", error);
