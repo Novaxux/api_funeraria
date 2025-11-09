@@ -9,8 +9,6 @@ import { PORT, CORS_ORIGIN, SESSION_SECRET } from "./config/config.js";
 import apiRoutes from "./routes/api.routes.js";
 
 // Middlewares
-// import { attachUser } from "./middlewares/auth.middleware.js"; // Descomentar cuando se implemente JWT
-
 const app = express();
 app.use(morgan("dev"));
 app.use(express.json());
@@ -30,9 +28,6 @@ app.use(
     },
   })
 );
-
-// --- Adjunta usuario autenticado a req.user ---
-// app.use(attachUser); // Descomentar cuando se implemente JWT
 
 // --- Rutas ---
 app.use("/api", apiRoutes);
