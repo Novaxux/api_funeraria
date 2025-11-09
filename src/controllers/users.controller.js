@@ -30,7 +30,7 @@ export const signup = async (req, res) => {
     connection.release();
 
     // Iniciar sesión automáticamente tras registrarse
-    req.session.userId = newUserId;
+    req.session.user = { id: newUserId };
 
     return res.status(201).json({
       message: "Your profile has been created successfully.",
@@ -64,8 +64,8 @@ export const login = async (req, res) => {
         .status(401)
         .json({ message: "Email or password are incorrect." });
 
-    req.session.userId = user.user_id;
-
+    req.session.user = { id: user.id_user };
+    console.log("Session after login:", req.session);
     return res.status(200).json({
       message: "Login successful.",
     });

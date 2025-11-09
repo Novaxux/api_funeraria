@@ -12,7 +12,7 @@ import apiRoutes from "./routes/api.routes.js";
 const app = express();
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
+// app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 
 // --- Configuración de sesión (opcional, puede ser útil para web) ---
 app.use(
