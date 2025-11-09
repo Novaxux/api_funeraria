@@ -108,3 +108,23 @@ export const getRelatives = async (req, res) => {
     return res.status(500).json({ message: "Error fetching relatives." });
   }
 };
+
+export const getRelativeById = async (req, res) => {
+  try {
+    const id_user = req.session?.user?.id;
+    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+
+    const id_relative = parseInt(req.params.id, 10);
+    if (Number.isNaN(id_relative)) return res.status(400).json({ message: "Invalid relative id." });
+
+    const relative = await relativesRepo.getRelativeIfLinked(id_user, id_relative);
+    if (!relative) return res.status(404).json({ message: "Relative not found or not linked to this user." });
+
+    // Protect sensitive fields if any (for now we return only non-sensitive columns)
+    const { id_relative: rid, name, relationship, age } = relative;
+    return res.status(200).json({ relative: { id_relative: rid, name, relationship, age } });
+  } catch (error) {
+    console.error("Get relative by id error:", error);
+    return res.status(500).json({ message: "Error fetching relative." });
+  }
+};
