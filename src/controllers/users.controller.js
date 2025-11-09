@@ -39,7 +39,6 @@ export const signup = async (req, res) => {
 
     return res.status(201).json({
       message: "Your profile has been created successfully.",
-      user_id: newUserId,
     });
   } catch (error) {
     await connection.rollback();
@@ -69,7 +68,6 @@ export const login = async (req, res) => {
 
     return res.status(200).json({
       message: "Login successful.",
-      user_id: user.user_id,
     });
   } catch (error) {
     console.error("Login error:", error);
