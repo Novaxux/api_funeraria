@@ -48,6 +48,17 @@ export default function relativesRepository(pool) {
       );
     },
 
+    // Get a relative only if it's linked to the given user
+    async getRelativeIfLinked(id_user, id_relative) {
+      const [rows] = await pool.query(
+        `SELECT r.* FROM relatives r
+         JOIN relatives_users ru ON ru.id_relative = r.id_relative
+         WHERE ru.id_user = ? AND r.id_relative = ? LIMIT 1`,
+        [id_user, id_relative]
+      );
+      return rows[0] || null;
+    },
+
     // Add relative with transaction (create + link)
     async addRelativeTransaction({ id_user, relativeData }) {
       const connection = await pool.getConnection();

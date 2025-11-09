@@ -3,11 +3,13 @@ import {
   addRelative,
   removeRelative,
   getRelatives,
+  getRelativeById,
 } from "../controllers/relatives.controller.js";
 
 const router = express.Router();
 
 router.get("/", getRelatives);
+router.get("/:id", getRelativeById);
 router.post("/add", addRelative);
 router.delete("/remove", removeRelative);
 
