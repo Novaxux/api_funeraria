@@ -94,3 +94,17 @@ export const removeRelative = async (req, res) => {
     return res.status(500).json({ message: "Error removing relative." });
   }
 };
+
+export const getRelatives = async (req, res) => {
+  try {
+    const id_user = req.session?.user?.id;
+    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+
+    const relatives = await relativesRepo.getRelativesByUser(id_user);
+
+    return res.status(200).json({ relatives });
+  } catch (error) {
+    console.error("Get relatives error:", error);
+    return res.status(500).json({ message: "Error fetching relatives." });
+  }
+};
