@@ -46,7 +46,7 @@ export const signup = async (req, res) => {
     connection.release();
 
     // Iniciar sesión automáticamente tras registrarse
-    req.session.user = { id: newUserId };
+    req.session.userId = newUserId;
 
     return res.status(201).json({
       message: "Your profile has been created successfully.",
@@ -80,8 +80,7 @@ export const login = async (req, res) => {
         .status(401)
         .json({ message: "Email or password are incorrect." });
 
-    req.session.user = { id: user.id_user };
-    console.log("Session after login:", req.session);
+    req.session.userId = user.id_user;
     return res.status(200).json({
       message: "Login successful.",
     });
@@ -98,4 +97,49 @@ export const logout = (req, res) => {
     res.clearCookie("connect.sid");
     return res.status(200).json({ message: "Logout successful." });
   });
+};
+
+// ========== UPDATE USER ==========
+export const updateUser = async (req, res) => {
+  try {
+    // if (!req.user || !req.user.id_user) {
+    //   return res.status(401).json({ message: "Authentication required." });
+    // }
+    const { name, email, role, password } = req.body;
+    const userId = req.user.id_user;
+
+    // Validar datos opcionales
+    const updates = {};
+    if (name) updates.name = name;
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: "Invalid email format." });
+      }
+      updates.email = email;
+    }
+    if (role) updates.role = role;
+    if (password) {
+      if (password.length < 6) {
+        return res
+          .status(400)
+          .json({ message: "Password must be at least 6 characters long." });
+      }
+      updates.password = await bcrypt.hash(password, 10);
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No valid fields to update." });
+    }
+
+    const updated = await usersRepository.updateUser(pool, userId, updates);
+    if (!updated) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    return res.status(200).json({ message: "User updated successfully." });
+  } catch (error) {
+    console.error("Update error:", error);
+    return res.status(500).json({ message: "Error updating user." });
+  }
 };
