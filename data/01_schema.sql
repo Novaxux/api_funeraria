@@ -47,14 +47,10 @@ CREATE TABLE users (
 -- ===========================================
 CREATE TABLE relatives (
   id_relative INT(11) NOT NULL AUTO_INCREMENT,
-  name VARCHAR(100) NOT NULL,
-  relationship ENUM('Mother','Father','Son','Daughter','Brother','Sister','Husband','Wife',
-                    'Grandfather','Grandmother','Uncle','Aunt','Nephew','Niece','Grandson','Granddaughter',
-                    'Cousin','Friend','Other') NOT NULL,
-  age INT(11) DEFAULT NULL,
   phone VARCHAR(20) NOT NULL,
   email VARCHAR(100) NOT NULL,
-  PRIMARY KEY (id_relative)
+  PRIMARY KEY (id_relative),
+  UNIQUE KEY uk_relative_contact (email, phone)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
@@ -67,14 +63,19 @@ CREATE TABLE relatives (
 CREATE TABLE relatives_users (
   id_user INT(11) NOT NULL,
   id_relative INT(11) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  age INT(11) DEFAULT NULL,
+  relationship ENUM(
+    'Mother','Father','Son','Daughter','Brother','Sister','Husband','Wife',
+    'Grandfather','Grandmother','Uncle','Aunt','Nephew','Niece','Grandson','Granddaughter',
+    'Cousin','Friend','Other'
+  ) NOT NULL,
   PRIMARY KEY (id_user, id_relative),
-  CONSTRAINT fk_ru_user
-    FOREIGN KEY (id_user)
+  CONSTRAINT fk_ru_user FOREIGN KEY (id_user)
     REFERENCES users (id_user)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT fk_ru_relative
-    FOREIGN KEY (id_relative)
+  CONSTRAINT fk_ru_relative FOREIGN KEY (id_relative)
     REFERENCES relatives (id_relative)
     ON DELETE CASCADE
     ON UPDATE CASCADE
