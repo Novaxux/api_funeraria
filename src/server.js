@@ -1,9 +1,10 @@
 import express from "express";
-import cors from "cors";
+// import cors from "cors";
 import morgan from "morgan";
 import sessionMiddleware from "./middleware/session.middleware.js";
 
-import { PORT, CORS_ORIGIN } from "./config/config.js";
+// import { PORT, CORS_ORIGIN } from "./config/config.js";
+import { PORT } from "./config/config.js";
 
 // Enrutador principal
 import apiRoutes from "./routes/api.routes.js";
