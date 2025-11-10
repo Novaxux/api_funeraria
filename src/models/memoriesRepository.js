@@ -40,7 +40,11 @@ export default function memoriesRepository(pool) {
     },
 
     // Update an existing memory using provided connection
-    async updateMemory(connection, id_memory, { title, content, delivered, delivery_date }) {
+    async updateMemory(
+      connection,
+      id_memory,
+      { title, content, delivered, delivery_date }
+    ) {
       const fields = [];
       const params = [];
       if (title !== undefined) {
@@ -62,13 +66,16 @@ export default function memoriesRepository(pool) {
       if (fields.length === 0) return;
 
       params.push(id_memory);
-      const sql = `UPDATE memories SET ${fields.join(', ')} WHERE id_memory = ?`;
+      const sql = `UPDATE memories SET ${fields.join(", ")} WHERE id_memory = ?`;
       await connection.query(sql, params);
     },
 
     // Replace linked relatives for a memory (transaction-friendly)
     async replaceMemoryRelatives(connection, id_memory, relativeIds = []) {
-      await connection.query(`DELETE FROM memories_relatives WHERE id_memory = ?`, [id_memory]);
+      await connection.query(
+        `DELETE FROM memories_relatives WHERE id_memory = ?`,
+        [id_memory]
+      );
       if (!relativeIds || relativeIds.length === 0) return;
       const values = relativeIds.map((id) => [id_memory, id]);
       await connection.query(

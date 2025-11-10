@@ -1,5 +1,9 @@
 import express from "express";
-import { createMemory, editMemory, getMemories } from "../controllers/memories.controller.js";
+import {
+  createMemory,
+  editMemory,
+  getMemories,
+} from "../controllers/memories.controller.js";
 
 const router = express.Router();
 
