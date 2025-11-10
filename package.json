@@ -7,9 +7,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "npm run lint && nodemon src/server.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix",
-    "format": "prettier --write .",
+    "lint": "eslint src/",
+    "lint:fix": "eslint  src/ --fix",
+    "format": "prettier --write src/",
     "prepare": "husky"
   },
   "keywords": [],
@@ -33,7 +33,7 @@
     "prettier": "3.6.2"
   },
   "lint-staged": {
-    "**/*": [
+    "src/**/*.{js,ts}": [
       "npm run lint",
       "npm run format"
     ]
