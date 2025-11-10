@@ -67,4 +67,30 @@ export default class RelativesRepository {
       [id_user, id_relative]
     );
   }
+  static async updateRelativeRelation(
+    connection,
+    id_user,
+    id_relative,
+    fields
+  ) {
+    const allowed = ["name", "age", "relationship"];
+    const updates = [];
+    const values = [];
+
+    for (const key of allowed) {
+      if (fields[key] !== undefined) {
+        updates.push(`${key} = ?`);
+        values.push(fields[key]);
+      }
+    }
+    if (updates.length === 0) return false;
+
+    values.push(id_user, id_relative);
+
+    await connection.query(
+      `UPDATE relatives_users SET ${updates.join(", ")} WHERE id_user = ? AND id_relative = ?`,
+      values
+    );
+    return true;
+  }
 }
