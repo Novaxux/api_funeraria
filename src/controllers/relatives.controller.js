@@ -163,3 +163,114 @@ export const getRelativeById = async (req, res) => {
     return res.status(500).json({ message: "Error fetching relative." });
   }
 };
+
+export const editRelative = async (req, res) => {
+  try {
+    const id_user = req.session?.user?.id;
+    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+
+    const { id_relative, name, age, relationship, phone, email } = req.body;
+    if (!id_relative)
+      return res.status(400).json({ message: "Relative ID required." });
+
+    // Verifica si el familiar está vinculado al usuario
+    const currentRelative = await RelativesRepository.getRelativeIfLinked(
+      pool,
+      id_user,
+      id_relative
+    );
+    if (!currentRelative)
+      return res.status(404).json({
+        message: "Relative not found or not linked to this user.",
+      });
+
+    const connection = await pool.getConnection();
+    try {
+      await connection.beginTransaction();
+
+      // Si se intenta editar email o phone
+      if (
+        (email && email !== currentRelative.email) ||
+        (phone && phone !== currentRelative.phone)
+      ) {
+        // Ambos deben ser diferentes para crear uno nuevo
+        if (
+          email &&
+          phone &&
+          email !== currentRelative.email &&
+          phone !== currentRelative.phone
+        ) {
+          // Verifica si ya existe ese familiar
+          const exists = await RelativesRepository.findByEmailOrPhone(pool, {
+            email,
+            phone,
+          });
+          if (exists) {
+            await connection.rollback();
+            connection.release();
+            return res.status(409).json({
+              message: "Ya existe un familiar con ese correo y teléfono.",
+            });
+          }
+          // Crea nuevo familiar y vincula
+          const createdId = await RelativesRepository.createRelative(
+            connection,
+            {
+              email,
+              phone,
+            }
+          );
+          await RelativesRepository.unlinkRelativeFromUser(
+            connection,
+            id_user,
+            id_relative
+          );
+          await RelativesRepository.linkRelativeToUser(connection, {
+            id_user,
+            id_relative: createdId,
+            name,
+            age,
+            relationship,
+          });
+          await connection.commit();
+          connection.release();
+          return res.status(200).json({
+            message: "Familiar actualizado y creado correctamente.",
+            relative_id: createdId,
+          });
+        } else {
+          await connection.rollback();
+          connection.release();
+          return res.status(400).json({
+            message:
+              "Para cambiar correo y teléfono debes proporcionar ambos y que sean diferentes.",
+          });
+        }
+      } else {
+        // Solo actualiza los campos enviados en la relación
+        const updated = await RelativesRepository.updateRelativeRelation(
+          connection,
+          id_user,
+          id_relative,
+          { name, age, relationship }
+        );
+        await connection.commit();
+        connection.release();
+        return res.status(200).json({
+          message: updated
+            ? "Familiar actualizado correctamente."
+            : "No se enviaron campos para actualizar.",
+          relative_id: id_relative,
+        });
+      }
+    } catch (err) {
+      await connection.rollback();
+      connection.release();
+      console.error("Edit relative error:", err);
+      return res.status(500).json({ message: "Transaction failed." });
+    }
+  } catch (error) {
+    console.error("Edit relative error:", error);
+    return res.status(500).json({ message: "Error editing relative." });
+  }
+};
