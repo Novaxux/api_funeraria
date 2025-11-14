@@ -3,8 +3,7 @@ import pool from "../config/db.js";
 
 export const addRelative = async (req, res) => {
   try {
-    const id_user = req.session?.user?.id;
-    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+    const id_user = req.session.user.id;
 
     const { name, relationship, age, phone, email } = req.body;
     if (!name || !relationship || !phone || !email)
@@ -91,8 +90,7 @@ export const addRelative = async (req, res) => {
 
 export const removeRelative = async (req, res) => {
   try {
-    const id_user = req.session?.user?.id;
-    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+    const id_user = req.session.user.id;
 
     const { id_relative } = req.body;
     if (!id_relative)
@@ -123,8 +121,7 @@ export const removeRelative = async (req, res) => {
 
 export const getRelatives = async (req, res) => {
   try {
-    const id_user = req.session?.user?.id;
-    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+    const id_user = req.session.user.id;
 
     const relatives = await RelativesRepository.getRelativesByUser(
       pool,
@@ -139,8 +136,7 @@ export const getRelatives = async (req, res) => {
 
 export const getRelativeById = async (req, res) => {
   try {
-    const id_user = req.session?.user?.id;
-    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+    const id_user = req.session.user.id;
 
     const id_relative = parseInt(req.params.id, 10);
     if (Number.isNaN(id_relative))
@@ -166,8 +162,7 @@ export const getRelativeById = async (req, res) => {
 
 export const editRelative = async (req, res) => {
   try {
-    const id_user = req.session?.user?.id;
-    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+    const id_user = req.session.user.id;
 
     const { id_relative, name, age, relationship, phone, email } = req.body;
     if (!id_relative)

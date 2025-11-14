@@ -1,26 +1,34 @@
-import usersRepository from "../models/usersRepository.js";
 import pool from "../config/db.js";
-
-// Middleware para adjuntar usuario autenticado a req.user
-export const attachUser = async (req, res, next) => {
-  try {
-    if (req.session && req.session.userId) {
-      const user = await usersRepository.findById(pool, req.session.userId);
-      if (user) {
-        req.user = user;
-      }
-    }
-    next();
-  } catch (error) {
-    console.error("Error attaching user:", error);
-    next();
-  }
-};
+import UsersRepository from "../models/usersRepository.js";
 
 // Middleware para verificar si el usuario está autenticado
-export const requireAuth = (req, res, next) => {
-  if (!req.session || !req.session.userId) {
-    return res.status(401).json({ message: "Authentication required." });
-  }
-  next();
+export const authorizeRole = (...allowedRoles) => {
+  return async (req, res, next) => {
+    try {
+      const user = req?.session?.user?.id;
+      console.log("User ID:", user);
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      let role;
+      if (req.session.user.role) {
+        role = req.session.user.role;
+      } else {
+        const user = await UsersRepository.findById(
+          pool,
+          req?.session?.user?.id
+        );
+        role = user.role;
+        req.session.user.role = role;
+      }
+      console.log("User role:", role);
+      if (!allowedRoles.includes(role)) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+    } catch (err) {
+      console.error("Authorization error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    next();
+  };
 };
