@@ -5,8 +5,7 @@ const memoriesRepo = memoriesRepository(pool);
 
 export const createMemory = async (req, res) => {
   try {
-    const id_user = req.session?.user?.id;
-    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+    const id_user = req.session.user.id;
 
     const { title, content, relativeIds = [] } = req.body;
     if (!content || content.trim() === "")
@@ -49,9 +48,6 @@ export const createMemory = async (req, res) => {
 
 export const editMemory = async (req, res) => {
   try {
-    const id_user = req.session?.user?.id;
-    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
-
     const { id_memory, title, content, relativeIds } = req.body;
     if (!id_memory)
       return res.status(400).json({ message: "Memory ID is required." });
@@ -93,8 +89,7 @@ export const editMemory = async (req, res) => {
 
 export const getMemories = async (req, res) => {
   try {
-    const id_user = req.session?.user?.id;
-    if (!id_user) return res.status(401).json({ message: "Unauthorized." });
+    const id_user = req.session.user.id;
 
     const memories = await memoriesRepo.getMemoriesByUser(id_user);
     return res.status(200).json({ memories });
