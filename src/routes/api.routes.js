@@ -1,11 +1,13 @@
 import usuariosRoutes from "./users.routes.js";
 import relativesRoutes from "./relatives.routes.js";
 import memoriesRoutes from "./memories.routes.js";
+import funeralHomesRoutes from "./funeralHomes.routes.js";
 import { Router } from "express";
 
 const router = Router();
 router.use("/users", usuariosRoutes);
 router.use("/relatives", relativesRoutes);
 router.use("/memories", memoriesRoutes);
+router.use("/funeral-homes", funeralHomesRoutes);
 
 export default router;
