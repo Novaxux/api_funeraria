@@ -1,9 +1,12 @@
 const UsersRepository = {
-  async createUser(pool, { name, role, email, password }) {
+  async createUser(
+    pool,
+    { name, role, email, password, id_funeral_home = null }
+  ) {
     const [result] = await pool.query(
-      `INSERT INTO users (name, role, email, password )
-       VALUES (?, ?, ?, ? )`,
-      [name, role, email, password]
+      `INSERT INTO users (name, role, email, password, id_funeral_home)
+     VALUES (?, ?, ?, ?, ?)`,
+      [name, role, email, password, id_funeral_home]
     );
     return result.insertId;
   },
