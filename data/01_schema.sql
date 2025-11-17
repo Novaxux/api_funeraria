@@ -130,3 +130,16 @@ CREATE TABLE memories_relatives (
     ON DELETE CASCADE
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ===========================================
+-- TABLE: FUNERAL_HOME_PERMISSIONS
+-- Stores permissions assigned to funeral homes.
+-- ===========================================
+CREATE TABLE funeral_home_permissions (
+  id_permission INT AUTO_INCREMENT PRIMARY KEY,
+  id_funeral_home INT NOT NULL,
+  permission ENUM('view_deceased','update_status') NOT NULL,
+  granted TINYINT(1) NOT NULL DEFAULT 1,
+  FOREIGN KEY (id_funeral_home) REFERENCES funeral_homes(id_funeral_home)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
