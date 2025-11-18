@@ -1,5 +1,6 @@
 import WorkersRepository from "../models/WorkersRepository.js";
 import pool from "../config/db.js";
+import bcrypt from "bcrypt";
 
 export const registerWorker = async (req, res) => {
   try {
@@ -8,11 +9,11 @@ export const registerWorker = async (req, res) => {
 
     if (!name || !email || !password)
       return res.status(400).json({ message: "Missing fields." });
-
+    const hashedPassword = await bcrypt.hash(password, 10);
     const id = await WorkersRepository.createWorker(pool, {
       name,
       email,
-      password,
+      hashedPassword,
       id_funeral_home,
     });
 

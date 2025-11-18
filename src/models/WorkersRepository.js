@@ -1,6 +1,6 @@
 export default class WorkersRepository {
   static async createWorker(pool, worker) {
-    const { name, email, password, id_funeral_home } = worker;
+    const { name, email, hashedPassword, id_funeral_home } = worker;
 
     const [exists] = await pool.query(
       `SELECT id_user FROM users WHERE email = ? LIMIT 1`,
@@ -11,7 +11,7 @@ export default class WorkersRepository {
     const [result] = await pool.query(
       `INSERT INTO users (name, email, password, role, id_funeral_home)
        VALUES (?, ?, ?, 'worker', ?)`,
-      [name, email, password, id_funeral_home]
+      [name, email, hashedPassword, id_funeral_home]
     );
 
     return result.insertId;
