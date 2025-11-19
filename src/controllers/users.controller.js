@@ -84,6 +84,11 @@ export const login = async (req, res) => {
     console.log("Session after login:", req.session);
     return res.status(200).json({
       message: "Login successful.",
+      user: {
+        name: user.name,
+        role: user.role,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error("Login error:", error);
